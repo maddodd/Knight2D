@@ -56,7 +56,14 @@ func _ready():
 
 func collect_coin():
 	coins_collected += 1
-	show_floating_message("You've collected %d coins!" % coins_collected)
+	match coins_collected:
+		1:
+			show_floating_message("You've collected %d coin!" % coins_collected)
+		_:
+			show_floating_message("You've collected %d coins!" % coins_collected)
+		
+	
+	
 
 func show_floating_message(text: String):
 	message_label.text = text
