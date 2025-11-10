@@ -17,6 +17,7 @@ var is_rolling = false
 var can_roll = true
 var facing = 1  # 1 = right, -1 = left
 var coins_collected: int = 0
+var hp = 3
 
 # ------------------------------------------------------------
 # MOVEMENT + ROLL LOGIC
@@ -104,12 +105,13 @@ func create_afterimage():
 	var anim_name := animated_sprite.animation
 	var frame_idx := animated_sprite.frame
 	var frame_texture := frames.get_frame_texture(anim_name, frame_idx)
+	
 
 	ghost.texture = frame_texture
 	ghost.flip_h = animated_sprite.flip_h
 	ghost.global_position = animated_sprite.global_position
 	ghost.scale = animated_sprite.scale
-	ghost.modulate = Color(1, 1, 1, 0.6)  # semi-transparent
+	ghost.modulate = Color(0.991, 0.0, 0.677, 0.6)
 
 	get_parent().add_child(ghost)
 
