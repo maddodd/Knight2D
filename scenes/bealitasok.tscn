@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://trda3ghonjob"]
+
+[ext_resource type="Script" uid="uid://bnjv4cscabkpw" path="res://scripts/bealitasok.gd" id="1_vfq27"]
+
+[node name="Bealitasok" type="CanvasLayer"]
+script = ExtResource("1_vfq27")

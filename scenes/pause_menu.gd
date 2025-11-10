@@ -5,10 +5,14 @@ extends CanvasLayer
 @onready var vbox_container: VBoxContainer = $PanelContainer/VBoxContainer
 @onready var paused_label: Label = $PanelContainer/VBoxContainer/Paused
 @onready var resume_button: Button = $PanelContainer/VBoxContainer/Resume
+@onready var settings_button: Button = $PanelContainer/VBoxContainer/Settings  # Settings button
 @onready var main_menu_button: Button = $"PanelContainer/VBoxContainer/Main Menu"
 @onready var quit_button: Button = $"PanelContainer/VBoxContainer/Save and Quit"
 
 func _ready():
+	# figyelmi minidg hogy megvan e álélitva a game
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 	visible = false
 	
 	# Hozzuk létre a háttér overlay-t, ha még nincs
@@ -33,15 +37,15 @@ func _ready():
 	# Állítsuk be a PanelContainer-t középre és megfelelő méretre
 	var viewport_size = get_viewport().get_visible_rect().size
 	panel_container.anchor_left = 0.5
-	panel_container.anchor_top = 0.5
+	panel_container.anchor_top = 1
 	panel_container.anchor_right = 0.5
 	panel_container.anchor_bottom = 0.5
-	panel_container.offset_left = -200  # Fél szélesség
-	panel_container.offset_top = -150  # Fél magasság
+	panel_container.offset_left = -200  
+	panel_container.offset_top = -150 
 	panel_container.offset_right = 200
 	panel_container.offset_bottom = 150
 	
-	# Állítsuk be a címkét és gombokat
+	# JÁTÉK SZÜNETELTETVE
 	if paused_label:
 		paused_label.text = "JÁTÉK SZÜNETELTETVE"
 		paused_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -49,6 +53,10 @@ func _ready():
 	if resume_button:
 		resume_button.text = "Folytatás"
 		resume_button.connect("pressed", _on_resume_pressed)
+	
+	if settings_button:
+		settings_button.text = "Beállítások"
+		settings_button.connect("pressed", _on_settings_pressed)
 	
 	if main_menu_button:
 		main_menu_button.text = "Főmenü"
@@ -59,22 +67,29 @@ func _ready():
 		quit_button.connect("pressed", _on_quit_pressed)
 	
 	# Állítsuk be a VBoxContainer-t
-	vbox_container.add_theme_constant_override("separation", 10)
+	vbox_container.add_theme_constant_override("separation", 30)
 
 func _input(event):
 	if event.is_action_pressed("pause"):
+		get_viewport().set_input_as_handled()
 		toggle_pause()
 
 func toggle_pause():
 	visible = not visible
 	get_tree().paused = visible
 	
-	# Állítsuk be a háttér overlay láthatóságát
 	if background_overlay:
 		background_overlay.visible = visible
 
 func _on_resume_pressed():
 	toggle_pause()
+
+func _on_settings_pressed():
+	print("Beállítások megnyitása")
+	var settings_scene = load("res://scenes/bealitasok.tscn")
+	var settings_instance = settings_scene.instantiate()
+	get_tree().current_scene.add_child(settings_instance)
+	settings_instance.open()
 
 func _on_main_menu_pressed():
 	get_tree().paused = false
