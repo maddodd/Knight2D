@@ -1,6 +1,10 @@
 extends CanvasLayer
-var hang_label: Label 
-var hang_slider: HSlider  # Ezt is hozzáadtam, hogy könnyen elérhető legyen
+var master_label: Label 
+var master_slider: HSlider
+var music_label: Label
+var music_slider: HSlider
+var sfx_label: Label
+var sfx_slider: HSlider
 
 func _ready():
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -21,16 +25,16 @@ func create_ui():
 	background_overlay.offset_bottom = 0
 	add_child(background_overlay)
 	
-	# Panel
+	# Panel - nagyobb a több csúszka miatt
 	var panel_container = PanelContainer.new()
 	panel_container.anchor_left = 0.5
 	panel_container.anchor_top = 0.5
 	panel_container.anchor_right = 0.5
 	panel_container.anchor_bottom = 0.5
-	panel_container.offset_left = -200
-	panel_container.offset_top = -150
-	panel_container.offset_right = 200
-	panel_container.offset_bottom = 150
+	panel_container.offset_left = -250
+	panel_container.offset_top = -200
+	panel_container.offset_right = 250
+	panel_container.offset_bottom = 200
 	
 	# Egyszerű panel stílus
 	var style_box = StyleBoxFlat.new()
@@ -49,7 +53,7 @@ func create_ui():
 	add_child(panel_container)
 	
 	var vbox_container = VBoxContainer.new()
-	vbox_container.add_theme_constant_override("separation", 20)
+	vbox_container.add_theme_constant_override("separation", 15)
 	panel_container.add_child(vbox_container)
 	
 	# Cím
@@ -64,26 +68,72 @@ func create_ui():
 	ter1.custom_minimum_size.y = 10
 	vbox_container.add_child(ter1)
 	
-	# Hangerő label
-	var volume_label = Label.new()
-	volume_label.text = "Hangerő"
-	volume_label.add_theme_font_size_override("font_size", 18)
-	vbox_container.add_child(volume_label)
+	# === MAIN HANGERŐ ===
+	var master_volume_label = Label.new()
+	master_volume_label.text = "Fő hangerő"
+	master_volume_label.add_theme_font_size_override("font_size", 18)
+	vbox_container.add_child(master_volume_label)
 	
-	# Hangerő csúszka
-	hang_slider = HSlider.new()  # Itt se használj var-t!
-	hang_slider.min_value = 0
-	hang_slider.max_value = 100
-	hang_slider.value = jelenlegi_hangerő() 
-	hang_slider.connect("value_changed", hang_valtozas)  # JAVÍTVA: "value_changed" kell legyen
-	vbox_container.add_child(hang_slider)
+	master_slider = HSlider.new()
+	master_slider.min_value = 0
+	master_slider.max_value = 100
+	master_slider.value = jelenlegi_hangerő("Master")
+	master_slider.connect("value_changed", master_hang_valtozas)
+	vbox_container.add_child(master_slider)
 	
-	# Hangerő érték
-	hang_label = Label.new()
-	hang_label.text = str(int(hang_slider.value)) + "%"
-	hang_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hang_label.add_theme_font_size_override("font_size", 14)
-	vbox_container.add_child(hang_label)
+	master_label = Label.new()
+	master_label.text = str(int(master_slider.value)) + "%"
+	master_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	master_label.add_theme_font_size_override("font_size", 14)
+	vbox_container.add_child(master_label)
+	
+	# Üres tér
+	var ter_master = Control.new()
+	ter_master.custom_minimum_size.y = 10
+	vbox_container.add_child(ter_master)
+	
+	# === ZENE HANGERŐ ===
+	var music_volume_label = Label.new()
+	music_volume_label.text = "Zene hangerő"
+	music_volume_label.add_theme_font_size_override("font_size", 18)
+	vbox_container.add_child(music_volume_label)
+	
+	music_slider = HSlider.new()
+	music_slider.min_value = 0
+	music_slider.max_value = 100
+	music_slider.value = jelenlegi_hangerő("Music")
+	music_slider.connect("value_changed", music_hang_valtozas)
+	vbox_container.add_child(music_slider)
+	
+	music_label = Label.new()
+	music_label.text = str(int(music_slider.value)) + "%"
+	music_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	music_label.add_theme_font_size_override("font_size", 14)
+	vbox_container.add_child(music_label)
+	
+	# Üres tér
+	var ter_music = Control.new()
+	ter_music.custom_minimum_size.y = 10
+	vbox_container.add_child(ter_music)
+	
+	# === SFX HANGERŐ ===
+	var sfx_volume_label = Label.new()
+	sfx_volume_label.text = "Hanghatások (SFX)"
+	sfx_volume_label.add_theme_font_size_override("font_size", 18)
+	vbox_container.add_child(sfx_volume_label)
+	
+	sfx_slider = HSlider.new()
+	sfx_slider.min_value = 0
+	sfx_slider.max_value = 100
+	sfx_slider.value = jelenlegi_hangerő("SFX")
+	sfx_slider.connect("value_changed", sfx_hang_valtozas)
+	vbox_container.add_child(sfx_slider)
+	
+	sfx_label = Label.new()
+	sfx_label.text = str(int(sfx_slider.value)) + "%"
+	sfx_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sfx_label.add_theme_font_size_override("font_size", 14)
+	vbox_container.add_child(sfx_label)
 	
 	# Üres tér
 	var ter2 = Control.new()
@@ -97,19 +147,37 @@ func create_ui():
 	vissza_button.connect("pressed", _on_back_pressed)
 	vbox_container.add_child(vissza_button)
 
-# A jelenlegi hangerőt lekéri
-func jelenlegi_hangerő():  # JAVÍTVA: helyes ékezet
-	# Master bus jelenlegi hangerője
-	var master_index = AudioServer.get_bus_index("Master")
-	var jelenlegi_db = AudioServer.get_bus_volume_db(master_index)
+# A jelenlegi hangerőt lekéri bármelyik bus-ra
+func jelenlegi_hangerő(bus_name: String):
+	var bus_index = AudioServer.get_bus_index(bus_name)
+	if bus_index == -1:
+		return 80.0  # Alapértelmezett ha nem létezik a bus
+	var jelenlegi_db = AudioServer.get_bus_volume_db(bus_index)
 	var hang_szazalek = db_to_linear(jelenlegi_db) * 100
 	return hang_szazalek
 
-# Hangerő beállítása
-func hang_beallitas(volume_percent: float):  # JAVÍTVA: logikusabb név
-	var master_index = AudioServer.get_bus_index("Master")
-	var hang_db = linear_to_db(volume_percent / 100.0)
-	AudioServer.set_bus_volume_db(master_index, hang_db)
+# Hangerő beállítása bármelyik bus-ra
+func hang_beallitas(bus_name: String, volume_percent: float):
+	var bus_index = AudioServer.get_bus_index(bus_name)
+	if bus_index != -1:
+		var hang_db = linear_to_db(volume_percent / 100.0)
+		AudioServer.set_bus_volume_db(bus_index, hang_db)
+
+# === SIGNAL HANDLERS ===
+func master_hang_valtozas(value: float):
+	if master_label:
+		master_label.text = str(int(value)) + "%"
+	hang_beallitas("Master", value)
+
+func music_hang_valtozas(value: float):
+	if music_label:
+		music_label.text = str(int(value)) + "%"
+	hang_beallitas("Music", value)
+
+func sfx_hang_valtozas(value: float):
+	if sfx_label:
+		sfx_label.text = str(int(value)) + "%"
+	hang_beallitas("SFX", value)
 
 func open():
 	visible = true
@@ -117,16 +185,6 @@ func open():
 func close():
 	visible = false
 	queue_free()
-
-func hang_valtozas(value: float):
-	# Volume érték frissítése a label-en
-	if hang_label:
-		hang_label.text = str(int(value)) + "%"
-	
-	# Hangerő beállítása a rendszerben
-	hang_beallitas(value)  # JAVÍTVA: helyes függvénynév
-	
-	print("Hangerő beállítva: ", value, "%")
 
 func _on_back_pressed():
 	close()
