@@ -103,8 +103,6 @@ func create_afterimage():
 	var frames := animated_sprite.sprite_frames
 	var anim_name := animated_sprite.animation
 	var frame_idx := animated_sprite.frame
-
-	# ✅ Use the correct Godot 4 method
 	var frame_texture := frames.get_frame_texture(anim_name, frame_idx)
 
 	ghost.texture = frame_texture
