@@ -10,7 +10,7 @@ extends CanvasLayer
 @onready var quit_button: Button = $"PanelContainer/VBoxContainer/Save and Quit"
 
 func _ready():
-	# figyelmi minidg hogy megvan e álélitva a game
+	# figyelni minidg hogy megvan e állitva a game
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	
 	visible = false
