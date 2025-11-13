@@ -5,6 +5,11 @@ const JUMP_VELOCITY = -250.0
 
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var message_label: Label = $ScoreLabel
+@onready var timer: Timer = $Timer #Timer for damage and death logic
+
+# ------------------------------------------------------------
+# ROLL SYSTEM VARIABLES
+# ------------------------------------------------------------
 
 @export var speed = 100
 @export var roll_speed = 225      # Roll movement speed
@@ -19,6 +24,27 @@ var facing = 1  # 1 = right, -1 = left
 var coins_collected: int = 0
 
 # ------------------------------------------------------------
+# HEALTH SYSTEM VARIABLES
+# ------------------------------------------------------------
+
+@export var max_health := 3
+var current_health := max_health
+var is_invulnerable := false
+
+signal health_changed(new_value)
+signal player_died
+
+# ------------------------------------------------------------
+# ABILITY UNLOCK SYSTEM
+# ------------------------------------------------------------
+
+var unlocked_abilities = {
+	"dash": true,
+	"double_jump": false,
+	"fireball": false
+}
+
+# ------------------------------------------------------------
 # MOVEMENT + ROLL LOGIC
 # ------------------------------------------------------------
 
@@ -31,8 +57,8 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor() and not is_rolling:
 		velocity.y = JUMP_VELOCITY
 
-	
-	if Input.is_action_just_pressed("roll") and can_roll and not is_rolling:
+	#Rolling check; can't roll if it isn't unlocked yet or the player is rolling already
+	if Input.is_action_just_pressed("roll") and can_roll and not is_rolling and unlocked_abilities["dash"]:
 		start_roll()
 
 	# Handle horizontal movement (disabled during roll)
@@ -117,6 +143,69 @@ func create_afterimage():
 	var tween = get_tree().create_tween()
 	tween.tween_property(ghost, "modulate:a", 0.0, afterimage_fade_time)
 	tween.finished.connect(func(): ghost.queue_free())
+
+# ------------------------------------------------------------
+# DAMAGE + HEALTH SYSTEM LOGIC
+# ------------------------------------------------------------
+
+func take_damage(amount := 1):
+	if is_invulnerable or is_rolling:
+		return  # can't take damage while invulnerable or rolling
+
+	current_health -= amount
+	emit_signal("health_changed", current_health)
+	velocity.x = -facing * 200 #Damage knockback simulation
+	flash_red()
+
+	if current_health <= 0:
+		die()
+	else:
+		become_invulnerable(1.0)  # 1 second of invulnerability
+
+func heal(amount := 1):
+	current_health = min(current_health + amount, max_health)
+	emit_signal("health_changed", current_health)
+
+func die():
+	print("Player has died!")
+	emit_signal("player_died")
+	Engine.time_scale = 0.5 #slower engine for dramatic effect
+	timer.start()
+	#death SFX
+	var hurt_hang_player = AudioStreamPlayer2D.new()
+	add_child(hurt_hang_player)
+	var hurt_hang = load("res://assets/sounds/hurt.wav")
+	if hurt_hang:
+		hurt_hang_player.stream = hurt_hang
+		hurt_hang_player.bus = "SFX"
+		hurt_hang_player.play()
+	
+	timer.start()
+
+func _on_timer_timeout() -> void:
+	Engine.time_scale = 1.0 #regular speed engine after respawn
+	get_tree().reload_current_scene()
+
+
+func become_invulnerable(duration: float):
+	is_invulnerable = true
+	var tween = get_tree().create_tween()
+	tween.tween_property(animated_sprite, "modulate:a", 0.5, 0.1)
+	tween.tween_property(animated_sprite, "modulate:a", 1.0, 0.1).set_delay(duration)
+	tween.finished.connect(func(): is_invulnerable = false)
+
+
+func flash_red():
+	var tween = get_tree().create_tween()
+	tween.tween_property(animated_sprite, "modulate", Color(1, 0.3, 0.3), 0.1)
+	tween.tween_property(animated_sprite, "modulate", Color(1, 1, 1), 0.1).set_delay(0.1)
+
+func _on_body_entered(body):
+	if body.is_in_group("enemies"):
+		take_damage(1)
+		if current_health <= 0: 
+			body.get_node("CollisionShape2D").queue_free()
+
 
 # ------------------------------------------------------------
 # COIN MESSAGE LOGIC
