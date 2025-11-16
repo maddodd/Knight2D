@@ -1,6 +1,6 @@
 extends Node
 
-<<<<<<< Updated upstream
+# Score rendszer
 var score = 0
 
 @onready var score_label: Label = %ScoreLabel
@@ -8,7 +8,8 @@ var score = 0
 func add_point():
 	score += 1
 	score_label.text = str(score) + " pontot szereztél."
-=======
+
+# Map betöltő rendszer
 var current_map: int = 0
 var map_lista: Node2D
 var current_map_instance: Node2D = null  # Az aktuálisan betöltött map instance
@@ -81,4 +82,3 @@ func next_map():
 		current_map = 0
 	
 	load_map(current_map)
->>>>>>> Stashed changes
