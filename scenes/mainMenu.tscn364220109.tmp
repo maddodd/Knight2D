@@ -22,7 +22,6 @@ offset_bottom = 433.0
 layout_mode = 2
 text = "ASCENDRIA"
 horizontal_alignment = 1
-max_lines_visible = 1
 
 [node name="Play" type="Button" parent="VBoxContainer"]
 layout_mode = 2
@@ -30,7 +29,7 @@ text = "Play"
 
 [node name="Settings" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-text = "Beállítások"
+text = "Settings"
 
 [node name="Exit" type="Button" parent="VBoxContainer"]
 layout_mode = 2

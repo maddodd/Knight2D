@@ -565,14 +565,14 @@ tile_set = SubResource("TileSet_fgtu4")
 [node name="Szövegek" type="Node" parent="."]
 
 [node name="Label" type="Label" parent="Szövegek"]
-offset_left = -242.0
-offset_top = -107.0
-offset_right = -72.0
-offset_bottom = -84.0
+offset_left = -254.0
+offset_top = -96.0
+offset_right = -8.0
+offset_bottom = -65.0
 theme_override_colors/font_color = Color(0.0117647, 0.14902, 0.34902, 1)
 theme_override_fonts/font = ExtResource("2_08vx1")
-theme_override_font_sizes/font_size = 16
-text = "Hello World!
+theme_override_font_sizes/font_size = 13
+text = "[szóköz] az ugráshoz
 "
 
 [node name="Ellenfelek" type="Node" parent="."]
