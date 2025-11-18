@@ -268,4 +268,5 @@ sprite_frames = SubResource("SpriteFrames_2hs0m")
 animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(5, -1)
 shape = SubResource("CircleShape2D_1jxqw")

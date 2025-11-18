@@ -8,7 +8,7 @@ func _ready():
 	
 	audio_player = AudioStreamPlayer2D.new()
 	add_child(audio_player)
-	# ccoin  hang
+	# coin  hang
 	var coin_hang = load("res://assets/sounds/coin.wav")
 	if coin_hang:
 		audio_player.stream = coin_hang
