@@ -19,6 +19,7 @@ const JUMP_VELOCITY = -250.0
 var is_rolling = false
 var can_roll = true
 var facing := 1
+var is_dead := false
 
 # ------------------------------------------------------------
 # HEALTH SYSTEM
@@ -43,7 +44,8 @@ var unlocked_abilities := {
 # MOVEMENT
 # ------------------------------------------------------------
 func _physics_process(delta: float) -> void:
-
+	if is_dead:
+		return
 	# Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
@@ -144,6 +146,15 @@ func create_afterimage():
 	var tween = get_tree().create_tween()
 	tween.tween_property(ghost, "modulate:a", 0.0, afterimage_fade_time)
 	tween.finished.connect(func(): ghost.queue_free())
+# ------------------------------------------------------------
+# GOOMBA STOMP
+# ------------------------------------------------------------
+
+func bounce():
+	velocity.y = JUMP_VELOCITY * 0.55
+	is_invulnerable = true
+	await get_tree().create_timer(0.1).timeout
+	is_invulnerable = false
 
 # ------------------------------------------------------------
 # DAMAGE + HEALTH
@@ -151,7 +162,7 @@ func create_afterimage():
 func take_damage(amount: int = 1, source_position: Vector2 = Vector2.ZERO) -> void:
 	if is_invulnerable or is_rolling:
 		return
-
+	
 	current_health -= amount
 	emit_signal("health_changed", current_health)
 
@@ -172,16 +183,34 @@ func heal(amount := 1) -> void:
 	emit_signal("health_changed", current_health)
 
 func die() -> void:
-	if animated_sprite.sprite_frames.has_animation("die"):
-		animated_sprite.play("die")
-
+	if not is_inside_tree():
+		return
+	
+	is_dead = true
 	emit_signal("player_died")
 
-	Engine.time_scale = 0.5
-	timer.start()
+	var frames := animated_sprite.sprite_frames
+	if frames and frames.has_animation("die"):
+		animated_sprite.play("die")
+	else:
+		print("NO 'die' ANIMATION FOUND")
 
+	Engine.time_scale = 0.5
+	if timer:
+		timer.start()
+
+	# Disable collisions
 	set_collision_layer_value(1, false)
 	set_collision_mask_value(2, false)
+
+	# Play death SFX
+	var hurt_player = AudioStreamPlayer2D.new()
+	add_child(hurt_player)
+	var hurt_sound = load("res://assets/sounds/hurt.wav")
+	if hurt_sound:
+		hurt_player.stream = hurt_sound
+		hurt_player.bus = "SFX"
+		hurt_player.play()
 
 func _on_timer_timeout() -> void:
 	Engine.time_scale = 1.0

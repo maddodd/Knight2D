@@ -148,7 +148,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"die",
-"speed": 5.0
+"speed": 4.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -258,15 +258,23 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_1jxqw"]
 radius = 6.0
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["player"]]
 collision_layer = 2
+collision_mask = 17
 script = ExtResource("1_g2els")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
 position = Vector2(5, -6)
 sprite_frames = SubResource("SpriteFrames_2hs0m")
 animation = &"die"
+frame_progress = 0.8143141
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["player"]]
 position = Vector2(5, -1)
 shape = SubResource("CircleShape2D_1jxqw")
+
+[node name="Timer" type="Timer" parent="." groups=["player"]]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -38,7 +38,7 @@ layout_mode = 2
 unique_name_in_owner = true
 script = ExtResource("1_0tnpc")
 
-[node name="Player" parent="." groups=["player"] instance=ExtResource("1_uwrxv")]
+[node name="Player" parent="." instance=ExtResource("1_uwrxv")]
 z_index = 5
 position = Vector2(-7, 49)
 
