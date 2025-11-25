@@ -44,12 +44,17 @@ var unlocked_abilities := {
 # MOVEMENT
 # ------------------------------------------------------------
 func _physics_process(delta: float) -> void:
-	if is_dead:
-		return
+	
 	# Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-
+	
+	
+	if is_dead:
+		velocity.y += get_gravity().y * delta
+		move_and_slide()
+		return
+	
 	# Jump
 	if Input.is_action_just_pressed("jump") and is_on_floor() and not is_rolling:
 		velocity.y = JUMP_VELOCITY
@@ -150,11 +155,8 @@ func create_afterimage():
 # GOOMBA STOMP
 # ------------------------------------------------------------
 
-func bounce():
-	velocity.y = JUMP_VELOCITY * 0.55
-	is_invulnerable = true
-	await get_tree().create_timer(0.1).timeout
-	is_invulnerable = false
+func bounce() -> void:
+	velocity.y = JUMP_VELOCITY * 0.6
 
 # ------------------------------------------------------------
 # DAMAGE + HEALTH
@@ -187,6 +189,7 @@ func die() -> void:
 		return
 	
 	is_dead = true
+	$CollisionShape2D.disabled = true
 	emit_signal("player_died")
 
 	var frames := animated_sprite.sprite_frames
@@ -234,15 +237,13 @@ func flash_red() -> void:
 func _on_body_entered(body: Node) -> void:
 	if body and body.is_in_group("enemies"):
 
-		var stomp_offset := 8.0
-		var stomp: bool = (velocity.y > 0 and global_position.y < body.global_position.y - stomp_offset)
+		#var stomp_offset := 8.0
+		var stomp = velocity.y > 0 and global_position.y < body.global_position.y - 4
 
 		if stomp:
-			if body.has_method("die"):
-				body.die()
-			velocity.y = JUMP_VELOCITY * 0.6
-		else:
-			take_damage(1, body.global_position)
+			body.die()
+			velocity.y = JUMP_VELOCITY * 0.6  
+			return
 
 # ------------------------------------------------------------
 # COIN MESSAGE

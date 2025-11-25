@@ -9,7 +9,7 @@ func _ready() -> void:
 		timer.stop()
 
 func _on_body_entered(body: Node) -> void:
-	# Only react to the player (or objects that look like the player)
+	# Only react to the player
 	if not body:
 		return
 	if not body.is_in_group("player"):

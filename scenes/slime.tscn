@@ -1,7 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://cqv3jx28qa4o8"]
+[gd_scene load_steps=11 format=3 uid="uid://cqv3jx28qa4o8"]
 
 [ext_resource type="Texture2D" uid="uid://dywkacdyg0eas" path="res://assets/sprites/slime_green.png" id="1_5jc4t"]
-[ext_resource type="Script" uid="uid://b68agr5g84fea" path="res://scripts/slime.gd" id="1_n6pvg"]
+[ext_resource type="Script" uid="uid://dqwvwkgm40l22" path="res://scenes/slime.gd" id="1_n6pvg"]
 [ext_resource type="PackedScene" uid="uid://bx5g52mgmhada" path="res://scenes/killzone.tscn" id="2_4l1t8"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ppcr1"]
@@ -40,10 +40,15 @@ animations = [{
 "speed": 10.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_da4t2"]
-size = Vector2(8, 12)
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_n6pvg"]
+radius = 6.0
+height = 12.0
 
-[node name="Slime" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_da4t2"]
+size = Vector2(20, 14)
+
+[node name="Slime" type="CharacterBody2D"]
+collision_layer = 8
 script = ExtResource("1_n6pvg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -52,21 +57,25 @@ autoplay = "default"
 frame = 3
 frame_progress = 0.580095
 
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CapsuleShape2D_n6pvg")
+one_way_collision_margin = 0.0
+
+[node name="RayCastJobbra" type="RayCast2D" parent="."]
+position = Vector2(0, 5)
+target_position = Vector2(9, 0)
+
+[node name="RayCastBalra" type="RayCast2D" parent="."]
+position = Vector2(0, 5)
+target_position = Vector2(-9, 0)
+
 [node name="Hitbox" parent="." groups=["enemies"] instance=ExtResource("2_4l1t8")]
-collision_layer = 17
-collision_mask = 3
+collision_layer = 16
 script = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 position = Vector2(0, 5)
 shape = SubResource("RectangleShape2D_da4t2")
-
-[node name="RayCastJobbra" type="RayCast2D" parent="."]
-position = Vector2(0, 5)
-target_position = Vector2(10, 0)
-
-[node name="RayCastBalra" type="RayCast2D" parent="."]
-position = Vector2(0, 5)
-target_position = Vector2(-10, 0)
 
 [connection signal="body_entered" from="Hitbox" to="." method="_on_Hitbox_body_entered"]
