@@ -37,16 +37,14 @@ func _on_Hitbox_body_entered(body):
 	if not body.is_in_group("player"):
 		return
 	
-	var stomp_offset := 16.0 
+	var stomp_offset := 24 
 	
 	var above: bool = body.global_position.y > global_position.y - stomp_offset
 	var falling: bool = body.velocity.y > -20 
 
 
 	if above and falling:
-		print("STOMP SUCCESS!")
 		body.bounce()
 		die()
 	else:
-		print("DAMAGE!")
 		body.take_damage(1, global_position)

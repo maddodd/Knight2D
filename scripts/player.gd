@@ -22,6 +22,19 @@ var facing := 1
 var is_dead := false
 
 # ------------------------------------------------------------
+# SWORD + SHIELD VARIABLES
+# ------------------------------------------------------------
+@export var slash_duration := 0.5
+@export var slash_cooldown := 0.5
+@export var block_duration := 0.3
+@export var block_cooldown := 0.75
+@onready var sword_hitbox: Area2D = $SwordHitbox
+var is_slashing = false
+var can_slash = true
+var is_blocking = false
+var can_block = true
+
+# ------------------------------------------------------------
 # HEALTH SYSTEM
 # ------------------------------------------------------------
 @export var max_health := 3
@@ -36,60 +49,74 @@ signal player_died
 # ------------------------------------------------------------
 var unlocked_abilities := {
 	"dash": true,
-	"double_jump": false,
-	"fireball": false
+	"shield": true,
+	"sword": true
 }
 
 # ------------------------------------------------------------
 # MOVEMENT
 # ------------------------------------------------------------
 func _physics_process(delta: float) -> void:
-	
 	# Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	
-	
+
 	if is_dead:
 		velocity.y += get_gravity().y * delta
 		move_and_slide()
 		return
-	
+
 	# Jump
 	if Input.is_action_just_pressed("jump") and is_on_floor() and not is_rolling:
 		velocity.y = JUMP_VELOCITY
 
 	# Roll
-	if Input.is_action_just_pressed("roll") and can_roll and not is_rolling and unlocked_abilities["dash"]:
+	if Input.is_action_just_pressed("roll") and can_roll and not is_rolling and unlocked_abilities.get("dash", false):
 		start_roll()
 
+	# Sword
+	if Input.is_action_just_pressed("sword") and can_slash and not is_slashing and unlocked_abilities.get("sword", false):
+		start_slash()
+
+	# Shield (hold to block)
+	if Input.is_action_pressed("shield") and can_block and not is_blocking and unlocked_abilities.get("shield", false):
+		start_block()
+	elif not Input.is_action_pressed("shield") and is_blocking:
+		end_block()
+
 	# Normal movement
-	if not is_rolling:
+	if not is_rolling and not is_blocking:
 		var direction := Input.get_axis("move_left", "move_right")
 		if direction != 0:
 			facing = sign(direction)
 			velocity.x = direction * SPEED
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
-
 		animated_sprite.flip_h = facing < 0
 
 	# ANIMATIONS
 	var frames := animated_sprite.sprite_frames
-
-	if is_rolling and frames.has_animation("roll"):
+	if is_slashing and frames.has_animation("sword"):
+		animated_sprite.play("sword")
+	elif is_blocking and frames.has_animation("shield"):
+		animated_sprite.play("shield")
+	elif is_rolling and frames.has_animation("roll"):
 		animated_sprite.play("roll")
-
-	elif is_on_floor():
-		if velocity.x == 0 and frames.has_animation("idle"):
-			animated_sprite.play("idle")
-		elif frames.has_animation("move"):
-			animated_sprite.play("move")
-
-	elif frames.has_animation("jump"):
+	elif not is_on_floor() and frames.has_animation("jump"):
 		animated_sprite.play("jump")
+	elif is_on_floor():
+		if abs(velocity.x) > 10 and frames.has_animation("move"):
+			animated_sprite.play("move")
+		else:
+			if frames.has_animation("idle"):
+				animated_sprite.play("idle")
 
 	move_and_slide()
+# ------------------------------------------------------------
+# ABILITY UNLOCKING
+# ------------------------------------------------------------
+func unlock_ability(ability: String) -> void:
+	unlocked_abilities[ability] = true
 
 # ------------------------------------------------------------
 # ROLLING
@@ -97,7 +124,6 @@ func _physics_process(delta: float) -> void:
 func start_roll() -> void:
 	is_rolling = true
 	can_roll = false
-
 	velocity.x = facing * roll_speed
 
 	set_collision_layer_value(1, false)
@@ -151,6 +177,46 @@ func create_afterimage():
 	var tween = get_tree().create_tween()
 	tween.tween_property(ghost, "modulate:a", 0.0, afterimage_fade_time)
 	tween.finished.connect(func(): ghost.queue_free())
+
+# ------------------------------------------------------------
+# SWORD SLASH
+# ------------------------------------------------------------
+func _on_sword_hitbox_body_entered(body):
+	if body.is_in_group("enemies"):
+		body.die()
+
+func enable_sword_hitbox() -> void:
+	sword_hitbox.monitoring = true
+	sword_hitbox.position.x = 12 * facing
+
+func disable_sword_hitbox() -> void:
+	sword_hitbox.monitoring = false
+
+func start_slash() -> void:
+	is_slashing = true
+	can_slash = false
+	animated_sprite.play("sword")  
+	enable_sword_hitbox()
+	
+	await animated_sprite.animation_finished
+	disable_sword_hitbox()
+	is_slashing = false
+	await get_tree().create_timer(slash_cooldown).timeout
+	can_slash = true
+
+# ------------------------------------------------------------
+# SHIELD BLOCK
+# ------------------------------------------------------------
+func start_block() -> void:
+	is_blocking = true
+	can_block = false
+	animated_sprite.play("shield")
+
+func end_block() -> void:
+	is_blocking = false
+	await get_tree().create_timer(block_cooldown).timeout
+	can_block = true
+
 # ------------------------------------------------------------
 # GOOMBA STOMP
 # ------------------------------------------------------------
@@ -162,7 +228,7 @@ func bounce() -> void:
 # DAMAGE + HEALTH
 # ------------------------------------------------------------
 func take_damage(amount: int = 1, source_position: Vector2 = Vector2.ZERO) -> void:
-	if is_invulnerable or is_rolling:
+	if is_invulnerable or is_rolling or is_blocking:
 		return
 	
 	current_health -= amount
@@ -195,8 +261,6 @@ func die() -> void:
 	var frames := animated_sprite.sprite_frames
 	if frames and frames.has_animation("die"):
 		animated_sprite.play("die")
-	else:
-		print("NO 'die' ANIMATION FOUND")
 
 	Engine.time_scale = 0.5
 	if timer:
@@ -230,20 +294,6 @@ func flash_red() -> void:
 	var tween = get_tree().create_tween()
 	tween.tween_property(animated_sprite, "modulate", Color(1,0.3,0.3), 0.08)
 	tween.tween_property(animated_sprite, "modulate", Color(1,1,1), 0.08).set_delay(0.08)
-
-# ------------------------------------------------------------
-# ENEMY COLLISION (STOMP LOGIC)
-# ------------------------------------------------------------
-func _on_body_entered(body: Node) -> void:
-	if body and body.is_in_group("enemies"):
-
-		#var stomp_offset := 8.0
-		var stomp = velocity.y > 0 and global_position.y < body.global_position.y - 4
-
-		if stomp:
-			body.die()
-			velocity.y = JUMP_VELOCITY * 0.6  
-			return
 
 # ------------------------------------------------------------
 # COIN MESSAGE

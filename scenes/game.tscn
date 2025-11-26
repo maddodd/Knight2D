@@ -41,6 +41,16 @@ script = ExtResource("1_0tnpc")
 [node name="Player" parent="." instance=ExtResource("1_uwrxv")]
 z_index = 5
 position = Vector2(-7, 49)
+roll_speed = 225
+roll_duration = 0.4
+roll_cooldown = 0.5
+afterimage_interval = 0.05
+afterimage_fade_time = 0.3
+slash_duration = 0.5
+slash_cooldown = 0.5
+block_duration = 0.3
+block_cooldown = 0.75
+max_health = 3
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2(0, -7)
