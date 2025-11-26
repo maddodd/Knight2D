@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://31igo5oqmfm0" path="res://assets/sprites/knight.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://841v1kws48w1" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://dax18yj3da4ch" path="res://assets/sprites/vedekezes.png" id="3_dqkch"]
-[ext_resource type="Texture2D" uid="uid://ceeopaxjtyvvg" path="res://assets/sprites/tamadas.png" id="4_qlg0r"]
+[ext_resource type="Texture2D" uid="uid://cp0beg0gg5ux6" path="res://assets/sprites/tamadasJAVITOTT.png" id="4_dqkch"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
 atlas = ExtResource("1_4flbx")
@@ -146,36 +146,36 @@ atlas = ExtResource("3_dqkch")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jc3p3"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(0, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hax0n"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(46, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t4otl"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(92, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j2b1d"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(138, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_cs1tg"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(184, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2dvfe"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(230, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_giy8y"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(276, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fdfoy"]
-atlas = ExtResource("4_qlg0r")
-region = Rect2(322, 0, 46, 32)
+atlas = ExtResource("4_dqkch")
+region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_3vyb7"]
 animations = [{
@@ -359,7 +359,13 @@ script = ExtResource("1_g2els")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
 position = Vector2(8, -14)
 sprite_frames = SubResource("SpriteFrames_3vyb7")
+<<<<<<< HEAD
 animation = &"idle"
+=======
+animation = &"sword"
+frame = 7
+frame_progress = 1.0
+>>>>>>> 8bd4125e7e7bc373410c27db463bd6ccff8d82fe
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["player"]]
 position = Vector2(8, -8)
