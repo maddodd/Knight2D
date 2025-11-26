@@ -9,9 +9,6 @@ var direction := 1
 @onready var body_collider: CollisionShape2D = $CollisionShape2D
 @onready var hitbox: Area2D = $Hitbox
 
-func _ready() -> void:
-	hitbox.body_entered.connect(_on_Hitbox_body_entered)
-
 func _physics_process(delta: float) -> void:
 	velocity.x = direction * SPEED
 

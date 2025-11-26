@@ -35,7 +35,7 @@ var is_blocking = false
 var can_block = true
 
 # ------------------------------------------------------------
-# HEALTH SYSTEM
+# HEALTH SYSTEM + LEVEL FINISH
 # ------------------------------------------------------------
 @export var max_health := 3
 var current_health := max_health
@@ -43,6 +43,7 @@ var is_invulnerable := false
 
 signal health_changed(new_value)
 signal player_died
+var in_finish_zone := false
 
 # ------------------------------------------------------------
 # ABILITY UNLOCKS
@@ -110,6 +111,8 @@ func _physics_process(delta: float) -> void:
 		else:
 			if frames.has_animation("idle"):
 				animated_sprite.play("idle")
+	if in_finish_zone and Input.is_action_just_pressed("interact"):
+		GameManager.complete_level()
 
 	move_and_slide()
 # ------------------------------------------------------------
@@ -302,7 +305,7 @@ var coins_collected := 0
 
 func _ready() -> void:
 	message_label.visible = false
-
+	GameManager.ability_unlocked.connect(_on_ability_unlocked)
 	if not is_in_group("player"):
 		add_to_group("player")
 
@@ -323,3 +326,31 @@ func show_floating_message(text: String) -> void:
 	tween.tween_property(message_label, "position:y", message_label.position.y - 20, 1.5)
 	tween.tween_property(message_label, "modulate:a", 0.0, 1.5)
 	tween.finished.connect(func(): message_label.visible = false)
+
+func demo_ability(ability: String):
+	var old_facing = facing
+	var old_velocity = velocity
+	facing = 1  
+	animated_sprite.flip_h = false
+	velocity = Vector2.ZERO
+	
+	match ability:
+		"dash":
+			start_roll()
+		"shield":
+			start_block()
+			await get_tree().create_timer(0.5).timeout
+			end_block()
+		"sword":
+			start_slash()
+	
+
+	facing = old_facing
+	animated_sprite.flip_h = facing < 0
+	velocity = old_velocity
+
+func _on_finish_reached():
+	in_finish_zone = true
+
+func _on_ability_unlocked(ability):
+	show_floating_message("Unlocked: " + GameManager.abilities[ability].name + "!")  # Reuse your coin msg
