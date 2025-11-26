@@ -1,5 +1,5 @@
 extends Resource
-class_name GameManager
+class_name GameManagerResource
 
 const save_path := "user://save.json"
 const abilities := {

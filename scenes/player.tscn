@@ -355,21 +355,11 @@ size = Vector2(6, 16)
 collision_layer = 2
 collision_mask = 9
 script = ExtResource("1_g2els")
-roll_speed = null
-roll_duration = null
-roll_cooldown = null
-afterimage_interval = null
-afterimage_fade_time = null
-slash_duration = null
-slash_cooldown = null
-block_duration = null
-block_cooldown = null
-max_health = null
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
 position = Vector2(8, -14)
 sprite_frames = SubResource("SpriteFrames_3vyb7")
-animation = &"jump"
+animation = &"idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["player"]]
 position = Vector2(8, -8)

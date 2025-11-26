@@ -112,14 +112,14 @@ func _physics_process(delta: float) -> void:
 			if frames.has_animation("idle"):
 				animated_sprite.play("idle")
 	if in_finish_zone and Input.is_action_just_pressed("interact"):
-		GameManager.complete_level()
+		gameManager.complete_level()
 
 	move_and_slide()
 # ------------------------------------------------------------
 # ABILITY UNLOCKING
 # ------------------------------------------------------------
 func unlock_ability(ability: String) -> void:
-	unlocked_abilities[ability] = true
+	gameManager.unlock_ability(ability); unlocked_abilities[ability] = true
 
 # ------------------------------------------------------------
 # ROLLING
@@ -305,7 +305,8 @@ var coins_collected := 0
 
 func _ready() -> void:
 	message_label.visible = false
-	GameManager.ability_unlocked.connect(_on_ability_unlocked)
+	gameManager.ability_unlocked.connect(_on_ability_unlocked)
+	unlocked_abilities = gameManager.unlocked_abilities.duplicate(true)
 	if not is_in_group("player"):
 		add_to_group("player")
 
@@ -349,8 +350,8 @@ func demo_ability(ability: String):
 	animated_sprite.flip_h = facing < 0
 	velocity = old_velocity
 
-func _on_finish_reached():
+func _on_finish_reached():  
 	in_finish_zone = true
 
 func _on_ability_unlocked(ability):
-	show_floating_message("Unlocked: " + GameManager.abilities[ability].name + "!")  # Reuse your coin msg
+	show_floating_message("Unlocked: " + gameManager.abilities[ability].name + "!")

@@ -21,8 +21,8 @@ buses/default_bus_layout="uid://cyhxsc2m5y3dv"
 
 [autoload]
 
-Music="*res://scenes/music.tscn"
 gameManager="*res://GameManager.tres"
+Music="*res://scenes/music.tscn"
 
 [dotnet]
 

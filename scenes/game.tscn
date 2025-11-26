@@ -1,10 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://dvox8ovd888y8"]
+[gd_scene load_steps=6 format=3 uid="uid://dvox8ovd888y8"]
 
 [ext_resource type="Script" uid="uid://nd70biem6rru" path="res://scripts/game_manager.gd" id="1_0tnpc"]
 [ext_resource type="Script" uid="uid://cxo6l3akg2x35" path="res://scenes/pause_menu.gd" id="1_dinhu"]
 [ext_resource type="PackedScene" uid="uid://4f1i2btsd05i" path="res://scenes/player.tscn" id="1_uwrxv"]
 [ext_resource type="Script" uid="uid://b14d2otow3g1m" path="res://scenes/score_label.gd" id="6_kvpfn"]
-[ext_resource type="PackedScene" uid="uid://ic3hd43aetm3" path="res://scenes/finish_line.tscn" id="6_p57ef"]
 [ext_resource type="FontFile" uid="uid://d0plparkoa47g" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="8_gee14"]
 
 [node name="Game" type="Node2D"]
@@ -64,5 +63,3 @@ script = ExtResource("6_kvpfn")
 
 [node name="MapLista" type="Node2D" parent="."]
 position = Vector2(1, 0)
-
-[node name="FinishLine" parent="." instance=ExtResource("6_p57ef")]
