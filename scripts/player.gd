@@ -306,7 +306,10 @@ var coins_collected := 0
 func _ready() -> void:
 	message_label.visible = false
 	gameManager.ability_unlocked.connect(_on_ability_unlocked)
+<<<<<<< HEAD
+=======
 	unlocked_abilities = gameManager.unlocked_abilities.duplicate(true)
+>>>>>>> b44535a01413dd09e2f12f307fd8d13f728a13c4
 	if not is_in_group("player"):
 		add_to_group("player")
 
@@ -354,4 +357,8 @@ func _on_finish_reached():
 	in_finish_zone = true
 
 func _on_ability_unlocked(ability):
+<<<<<<< HEAD
+	show_floating_message("Unlocked: " + gameManager.abilities[ability].name + "!")  # Reuse your coin msg
+=======
 	show_floating_message("Unlocked: " + gameManager.abilities[ability].name + "!")
+>>>>>>> b44535a01413dd09e2f12f307fd8d13f728a13c4
