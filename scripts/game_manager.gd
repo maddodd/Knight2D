@@ -13,11 +13,6 @@ func add_point():
 var current_map: int = 0
 var map_lista: Node2D
 var current_map_instance: Node2D = null  # Az aktuálisan betöltött map instance
-var map_scenes = [
-	"res://scenes/map_0.tscn",  # Map 0
-	"res://scenes/map_1.tscn",  # Map 1
-	# Itt lehet további map-okat hozzáadni
-]
 
 func _ready():
 	# MapLista referenciája - a GameManager és MapLista testvérek, szóval a szülőn keresztül
@@ -43,15 +38,16 @@ func _unhandled_input(event):
 		elif event.keycode == KEY_3:
 			load_map(2)
 			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_4:
+			load_map(3)
+			get_viewport().set_input_as_handled()
+		elif event.keycode == KEY_5:
+			load_map(4)
+			get_viewport().set_input_as_handled()
 
 func load_map(map_number: int):
 	if not map_lista:
 		print("HIBA: MapLista nincs inicializálva!")
-		return
-	
-	# Ellenőrizzük, hogy létezik-e a map
-	if map_number < 0 or map_number >= map_scenes.size():
-		print("HIBA: Map ", map_number, " nem létezik!")
 		return
 	
 	# Töröljük az előző map-ot, ha van
@@ -62,7 +58,7 @@ func load_map(map_number: int):
 	
 	# Betöltjük az új map-ot
 	current_map = map_number
-	var map_path = map_scenes[map_number]
+	var map_path = "res://scenes/map_" + str(map_number) + ".tscn"
 	var map_scene = load(map_path)
 	
 	if map_scene:
@@ -76,9 +72,4 @@ func load_map(map_number: int):
 func next_map():
 	# Következő map betöltése
 	current_map += 1
-	
-	# Ha nincs több map, visszaáll az elsőre
-	if current_map >= map_scenes.size():
-		current_map = 0
-	
 	load_map(current_map)

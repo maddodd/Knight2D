@@ -1,18 +1,19 @@
 [gd_scene load_steps=2 format=3 uid="uid://b15xa6d2rqhef"]
 
-[ext_resource type="Script" uid="uid://doq3c4t7pj3ro" path="res://scenes/ability_option.gd" id="1_gr1nx"]
+[ext_resource type="Script" uid="uid://op6pogvvcns0" path="res://scenes/AbilityOption.gd" id="1_gr1nx"]
 
 [node name="AbilityOption" type="VBoxContainer"]
+offset_right = 282.0
+offset_bottom = 291.0
 script = ExtResource("1_gr1nx")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="SkillName" type="Label" parent="."]
 layout_mode = 2
 
-[node name="AbilityName" type="Label" parent="."]
-layout_mode = 2
-
-[node name="AbilityDesc" type="Label" parent="."]
+[node name="SkillDesc" type="Label" parent="."]
 layout_mode = 2
 
 [node name="Select" type="Button" parent="."]
 layout_mode = 2
+text = "Select
+"

@@ -1,7 +1,7 @@
 extends CanvasLayer
 class_name CompletionUI
 
-@onready var player: Node2D = get_tree().get_first_node_in_group("player")
+@onready var player: Node2D = get_tree().get_first_node_in_group("player")  # Assumes player in "player"
 
 func _ready():
 	gameManager.level_completed.connect(show)
@@ -29,10 +29,10 @@ func hide_ui():
 	if ResourceLoader.exists(next_scene):
 		get_tree().change_scene_to_file(next_scene)
 	else:
-		get_tree().change_scene_to_file("res://MainMenu.tscn")
+		get_tree().change_scene_to_file("res://mainMenu.tscn")
 
-# Connect in editor or code: buttons' pressed/mouse_entered
+
 func _on_ability_selected(ability: String):
 	gameManager.unlock_ability(ability)
 	var tween = create_tween()
-	tween.tween_callback(hide).set_delay(1.0)  # Flash success
+	tween.tween_callback(hide).set_delay(1.0)

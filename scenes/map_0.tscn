@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://vb5up16uv38k"]
+[gd_scene load_steps=26 format=4 uid="uid://vb5up16uv38k"]
 
 [ext_resource type="Texture2D" uid="uid://dm76x07er6q2c" path="res://assets/sprites/world_tileset.png" id="1_wqnuq"]
 [ext_resource type="FontFile" uid="uid://d0plparkoa47g" path="res://assets/fonts/PixelOperator8-Bold.ttf" id="2_08vx1"]
@@ -6,9 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://bx5g52mgmhada" path="res://scenes/killzone.tscn" id="7_aereq"]
 [ext_resource type="PackedScene" uid="uid://dcxu1gkca3h3w" path="res://scenes/coin.tscn" id="8_7qf8q"]
 [ext_resource type="PackedScene" uid="uid://c7523qd8jrro0" path="res://scenes/platform-green.tscn" id="9_2idvc"]
-[ext_resource type="PackedScene" path="res://scenes/finish_line.tscn" id="9_gpuuy"]
+[ext_resource type="PackedScene" uid="uid://ic3hd43aetm3" path="res://scenes/finish_line.tscn" id="9_gpuuy"]
 [ext_resource type="PackedScene" uid="uid://dg7regxnihg1b" path="res://scenes/platform-yellow.tscn" id="10_1oc3a"]
-[ext_resource type="Script" path="res://scenes/finish_line.gd" id="10_comsx"]
 [ext_resource type="PackedScene" uid="uid://dcmubwc4w7r4k" path="res://scenes/platform-desert.tscn" id="11_utcmh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_2mgb8"]
@@ -609,6 +608,9 @@ position = Vector2(696, -136)
 [node name="Coin4" parent="PENYO" instance=ExtResource("8_7qf8q")]
 position = Vector2(1160, -135)
 
+[node name="Coin5" parent="PENYO" instance=ExtResource("8_7qf8q")]
+position = Vector2(1433, -235)
+
 [node name="Platformok" type="Node" parent="."]
 
 [node name="platform2" parent="Platformok" instance=ExtResource("9_2idvc")]
@@ -673,4 +675,3 @@ position = Vector2(861, -186)
 
 [node name="FinishLine" parent="." instance=ExtResource("9_gpuuy")]
 position = Vector2(1128, -272)
-script = ExtResource("10_comsx")

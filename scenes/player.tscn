@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://31igo5oqmfm0" path="res://assets/sprites/knight.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://841v1kws48w1" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://dax18yj3da4ch" path="res://assets/sprites/vedekezes.png" id="3_dqkch"]
-[ext_resource type="Texture2D" uid="uid://cp0beg0gg5ux6" path="res://assets/sprites/tamadasJAVITOTT.png" id="4_dqkch"]
+[ext_resource type="Texture2D" uid="uid://poayc4ggsl4o" path="res://assets/sprites/tamadasVEGSO.png" id="4_dqkch"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
 atlas = ExtResource("1_4flbx")
@@ -357,15 +357,11 @@ collision_mask = 9
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["player"]]
-position = Vector2(8, -14)
+position = Vector2(8, -12)
 sprite_frames = SubResource("SpriteFrames_3vyb7")
-<<<<<<< HEAD
-animation = &"idle"
-=======
 animation = &"sword"
 frame = 7
 frame_progress = 1.0
->>>>>>> 8bd4125e7e7bc373410c27db463bd6ccff8d82fe
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["player"]]
 position = Vector2(8, -8)
@@ -376,12 +372,11 @@ wait_time = 0.87
 one_shot = true
 
 [node name="SwordHitbox" type="Area2D" parent="."]
-visible = false
 collision_layer = 0
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordHitbox"]
-position = Vector2(25, -10)
+position = Vector2(20, -10)
 shape = SubResource("RectangleShape2D_dqkch")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
